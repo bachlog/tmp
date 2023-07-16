@@ -5,8 +5,8 @@
 
 ## Step 1. Install WSL2 Ubuntu on Windows
 - Ref: https://learn.microsoft.com/en-us/windows/ai/directml/gpu-pytorch-wsl
-- Command: `wsl --install`
-- Note: If current WSL not work, or WSL 1, should uninstall by Windows Uninstaller and re-install WSL 2. Check WSL 2 on Windows cmd: https://learn.microsoft.com/en-us/windows/ai/directml/gpu-cuda-in-wsl
+- Command: `wsl --install`, e.g., `wsl --install -d Ubuntu-22.04`
+- Note: If current WSL not work, or WSL 1, should uninstall by Windows Uninstaller and re-install WSL 2. Check WSL 2 on Windows cmd: [wsl-install](https://learn.microsoft.com/en-us/windows/wsl/install)
 
 ## Step 2. Install CUDA Toolkit on WSL2 Ubuntu
 - Do not install the default, and avoid 11.3
@@ -21,13 +21,26 @@
   $ sudo apt-get update
   $ sudo apt-get -y install cuda
   ```
-- Or can go with 11.5: https://developer.nvidia.com/cuda-11-5-1-download-archive?target_os=Linux&target_arch=x86_64&Distribution=WSL-Ubuntu&target_version=2.0&target_type=deb_local
+- Or can go with 11.5 (similarly): https://developer.nvidia.com/cuda-11-5-1-download-archive?target_os=Linux&target_arch=x86_64&Distribution=WSL-Ubuntu&target_version=2.0&target_type=deb_local
 - Verify: check with `nvidia-smi`
+
+## Step 2b. Install `cudnn` on WSL2 Ubuntu
+- Install `cudnn`:
+  ```
+  export last_public_key=3bf863cc # SEE NOTE BELOW
+  sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/${last_public_key}.pub
+  sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /"
+  sudo apt-get update
+  sudo apt-get install libcudnn8
+  sudo apt-get install libcudnn8-dev
+  ```
+- Ref [libcudnn8](https://stackoverflow.com/questions/66977227/could-not-load-dynamic-library-libcudnn-so-8-when-running-tensorflow-on-ubun).
 
 ## Step 3. Install python env and PyTorch
 - Example: install [miniconda](https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh)
+  `wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && bash Miniconda3-latest-Linux-x86_64.sh`
 - Create a minimal working env: `conda create -n py39 python=3.9`
-- Ref: [pytorch](https://github.com/pytorch/pytorch/issues/73487)
+- Ref: [pytorch i73487](https://github.com/pytorch/pytorch/issues/73487)
 - Instructions:
   ```
   pip install torch==1.11.0+cu115 torchvision==0.12.0+cu115 -f https://download.pytorch.org/whl/torch_stable.html
